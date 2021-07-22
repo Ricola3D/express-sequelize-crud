@@ -1,5 +1,5 @@
 {
-  "name": "express-sequelize-crud",
+  "name": "express-sequelize-crud-auth",
   "version": "3.5.1",
   "description": "React Admin backend with Express and Sequelize. 1 line per resource!",
   "main": "./lib/index.js",
@@ -8,7 +8,7 @@
     "type": "git",
     "url": "git+https://github.com/lalalilo/express-sequelize-crud.git"
   },
-  "author": "nicgirault <nic.girault@gmail.com>",
+  "author": "Ricola3D <ricola3d@gmail.com>",
   "keywords": [
     "react-admin",
     "sequelize",

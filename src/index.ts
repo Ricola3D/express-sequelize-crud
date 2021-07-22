@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import { Router, Request, Response, NextFunction } from 'express'
 import bodyParser from 'body-parser'
 import { getMany, GetList, Search, FiltersOption } from './getList'
 import { getOne, GetOne } from './getOne'
@@ -24,8 +24,11 @@ export { sequelizeCrud } from './sequelize'
 
 export { GetOne, Create, Destroy, Update, GetList, Search }
 
+export type AuthFunction = (req: Request, res: Response, next: NextFunction) => void
+
 export const crud = <I extends string | number, R>(
   path: string,
+  auth: AuthFunction,
   actions: Partial<Actions<I, R>>,
   options?: Partial<CrudOptions>
 ) => {
@@ -35,6 +38,7 @@ export const crud = <I extends string | number, R>(
   if (actions.getList)
     router.get(
       path,
+      auth,
       getMany(
         actions.getList,
         actions.search || undefined,
@@ -43,22 +47,22 @@ export const crud = <I extends string | number, R>(
     )
 
   if (actions.getOne) {
-    router.get(`${path}/:id`, getOne(actions.getOne))
+    router.get(`${path}/:id`, auth, getOne(actions.getOne))
   }
 
   if (actions.create) {
-    router.post(path, create(actions.create))
+    router.post(path, auth, create(actions.create))
   }
 
   if (actions.update) {
     if (!actions.getOne) {
       throw new Error('You cannot define update without defining getOne')
     }
-    router.put(`${path}/:id`, update(actions.update, actions.getOne))
+    router.put(`${path}/:id`, auth, update(actions.update, actions.getOne))
   }
 
   if (actions.destroy) {
-    router.delete(`${path}/:id`, destroy(actions.destroy))
+    router.delete(`${path}/:id`, auth, destroy(actions.destroy))
   }
 
   return router

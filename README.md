@@ -1,3 +1,9 @@
+# Changes from lalalilo/express-sequelize-crud 
+This repository is a fork of lalalilo/express-sequelize-crud. It only adds a few changes:
+- Add of an `auth` method for the crud routers with signature `(req, res, next) => void`
+- Add of the parameter `req` in the actions parameters, to allow management specific permissions thanks to a token for exemple.
+
+
 # express-sequelize-crud
 
 ```ts

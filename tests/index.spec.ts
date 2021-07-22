@@ -21,7 +21,9 @@ describe('crud', () => {
         const getList = jest.fn()
 
         const dataProvider = await setupApp(
-          crud('/users', {
+          crud('/users',
+          (req, res, next) => next(),
+          {
             getList,
           }),
           ctx
@@ -43,7 +45,7 @@ describe('crud', () => {
 
         expect(response.data).toEqual(rows)
         expect(response.total).toEqual(totalCount)
-        expect(getList).toHaveBeenCalledWith({
+        expect(getList).toHaveBeenCalledWith(expect.anything(), {
           offset: 10,
           limit: 5,
           filter: {},
@@ -55,7 +57,9 @@ describe('crud', () => {
         const search = jest.fn()
 
         const dataProvider = await setupApp(
-          crud('/users', {
+          crud('/users',
+          (req, res, next) => next(),
+          {
             getList: jest.fn(),
             search,
           }),
@@ -77,8 +81,12 @@ describe('crud', () => {
         })
         expect(response.data).toEqual(rows)
         expect(response.total).toEqual(totalCount)
-        expect(search).toHaveBeenCalledWith('some search', 25, {
-          language: 'en',
+        expect(search).toHaveBeenCalledWith(expect.anything(), {
+          q: 'some search',
+          limit: 25,
+          filter: {
+            language: 'en',
+          }
         })
       })
     })
@@ -87,7 +95,9 @@ describe('crud', () => {
       it('calls destroy with expected params', async () => {
         const destroy = jest.fn()
         const dataProvider = await setupApp(
-          crud('/users', {
+          crud('/users',
+          (req, res, next) => next(),
+          {
             destroy,
           }),
           ctx
@@ -98,7 +108,7 @@ describe('crud', () => {
         })
 
         expect(response.data).toEqual({ id: '1' })
-        expect(destroy).toHaveBeenCalledWith('1')
+        expect(destroy).toHaveBeenCalledWith(expect.anything(), '1')
       })
     })
 
@@ -108,7 +118,9 @@ describe('crud', () => {
         const update = jest.fn().mockResolvedValue({ id: 1, name: 'Éloi' })
 
         const dataProvider = await setupApp(
-          crud('/users', {
+          crud('/users',
+          (req, res, next) => next(),
+          {
             getOne,
             update,
           }),
@@ -123,7 +135,7 @@ describe('crud', () => {
         })
 
         expect(response.data).toEqual({ id: 1, name: 'Éloi' })
-        expect(update).toHaveBeenCalledWith('1', { name: 'Éloi' })
+        expect(update).toHaveBeenCalledWith(expect.anything(), '1', { name: 'Éloi' })
       })
 
       it('throws if getOne is not defined', async () => {
@@ -133,7 +145,9 @@ describe('crud', () => {
 
         try {
           await setupApp(
-            crud('/users', {
+            crud('/users',
+            (req, res, next) => next(),
+            {
               update,
             }),
             ctx
@@ -150,7 +164,9 @@ describe('crud', () => {
         const getOne = jest.fn().mockResolvedValue(null)
 
         const dataProvider = await setupApp(
-          crud('/users', {
+          crud('/users',
+          (req, res, next) => next(),
+          {
             getOne,
             update,
           }),
@@ -174,7 +190,9 @@ describe('crud', () => {
       it('calls create with expected params', async () => {
         const create = jest.fn().mockResolvedValue({ id: 1, name: 'Éloi' })
         const dataProvider = await setupApp(
-          crud('/users', {
+          crud('/users',
+          (req, res, next) => next(),
+          {
             create,
           }),
           ctx
@@ -187,7 +205,7 @@ describe('crud', () => {
         })
 
         expect(response.data).toEqual({ id: 1, name: 'Éloi' })
-        expect(create).toHaveBeenCalledWith({ name: 'Éloi' })
+        expect(create).toHaveBeenCalledWith(expect.anything(), { name: 'Éloi' })
       })
     })
 
@@ -195,7 +213,9 @@ describe('crud', () => {
       it('calls getOne with expected params', async () => {
         const getOne = jest.fn().mockResolvedValue({ id: 1, name: 'Éloi' })
         const dataProvider = await setupApp(
-          crud('/users', {
+          crud('/users',
+          (req, res, next) => next(),
+          {
             getOne,
           }),
           ctx
@@ -206,7 +226,7 @@ describe('crud', () => {
         })
 
         expect(response.data).toEqual({ id: 1, name: 'Éloi' })
-        expect(getOne).toHaveBeenCalledWith('1')
+        expect(getOne).toHaveBeenCalledWith(expect.anything(), '1')
       })
 
       it('throws a 404 when record is not found', async () => {
@@ -214,7 +234,9 @@ describe('crud', () => {
 
         const getOne = jest.fn().mockResolvedValue(null)
         const dataProvider = await setupApp(
-          crud('/users', {
+          crud('/users',
+          (req, res, next) => next(),
+          {
             getOne,
           }),
           ctx

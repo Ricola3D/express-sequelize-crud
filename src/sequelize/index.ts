@@ -6,16 +6,16 @@ export const sequelizeCrud = <I extends string | number, R extends Model>(
 ): Omit<Actions<I, R>, 'search'> => {
   const _model: any = model // TODO: how to correctly type this???
   return {
-    create: async body => _model.create(body),
-    update: async (id, body) => {
+    create: async (req, body) => _model.create(body),
+    update: async (req, id, body) => {
       const record = await _model.findByPk(id)
       if (!record) {
         throw new Error('Record not found')
       }
       return record.update(body)
     },
-    getOne: async id => _model.findByPk(id),
-    getList: async ({ filter, limit, offset, order }) => {
+    getOne: async (req, id) => _model.findByPk(id),
+    getList: async (req, { filter, limit, offset, order }) => {
       return _model.findAndCountAll({
         limit,
         offset,
@@ -24,7 +24,7 @@ export const sequelizeCrud = <I extends string | number, R extends Model>(
         raw: true,
       })
     },
-    destroy: async id => {
+    destroy: async (req, id) => {
       const record = await _model.findByPk(id)
       if (!record) {
         throw new Error('Record not found')
