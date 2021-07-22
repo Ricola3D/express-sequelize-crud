@@ -6,7 +6,7 @@
   "types": "./lib/src/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ricola3d/express-sequelize-crud.git"
+    "url": "git+https://github.com/Ricola3D/express-sequelize-crud.git"
   },
   "author": "Ricola3D <ricola3d@gmail.com>",
   "keywords": [
