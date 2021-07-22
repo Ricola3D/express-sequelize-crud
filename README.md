@@ -2,12 +2,12 @@
 This repository is a fork of lalalilo/express-sequelize-crud. It only adds a few changes:
 - Add of an `auth` method for the crud routers with signature `(req, res, next) => void`
 - Add of the parameter `req` in the actions parameters, to allow management specific permissions thanks to a token for exemple.
-
+- Standalone build (out of CircleCI)
 
 # express-sequelize-crud
 
 ```ts
-import crud, { sequelizeCrud } from 'express-sequelize-crud'
+import crud, { sequelizeCrud } from 'express-sequelize-crud2'
 
 app.use(crud('/admin/users', sequelizeCrud(User)))
 ```

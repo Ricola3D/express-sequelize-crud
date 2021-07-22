@@ -7,7 +7,7 @@
     "strict": true,
     "esModuleInterop": true,
     "declaration": true,
-    "emitDeclarationOnly": true,
+    "emitDeclarationOnly": false,
     "outDir": "lib"
   },
   "include": ["src"],
