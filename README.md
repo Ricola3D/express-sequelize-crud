@@ -7,7 +7,7 @@ This repository is a fork of lalalilo/express-sequelize-crud. It only adds a few
 # express-sequelize-crud
 
 ```ts
-import crud, { sequelizeCrud } from 'express-sequelize-crud2'
+import crud, { sequelizeCrud } from 'express-sequelize-crud-2'
 
 app.use(crud('/admin/users', sequelizeCrud(User)))
 ```
