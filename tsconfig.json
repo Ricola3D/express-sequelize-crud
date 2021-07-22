@@ -10,6 +10,6 @@
     "emitDeclarationOnly": false,
     "outDir": "lib"
   },
-  "include": ["src"],
+  "include": ["src/*"],
   "exclude": ["node_modules", "tests", "src/*.spec.ts"]
 }

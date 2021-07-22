@@ -25,7 +25,7 @@ For `getList` methods, the response includes the total number of items in the co
 ## Install
 
 ```
-yarn add express-sequelize-crud
+yarn add express-sequelize-crud-2
 ```
 
 ## Usage
