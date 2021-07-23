@@ -7,7 +7,7 @@ This repository is a fork of lalalilo/express-sequelize-crud. It only adds a few
 # express-sequelize-crud
 
 ```ts
-import crud, { sequelizeCrud } from 'express-sequelize-crud-2'
+import crud, { sequelizeCrud } from 'express-sequelize-crud-auth'
 
 app.use(crud('/admin/users', sequelizeCrud(User)))
 ```
@@ -25,7 +25,7 @@ For `getList` methods, the response includes the total number of items in the co
 ## Install
 
 ```
-yarn add express-sequelize-crud-2
+yarn add express-sequelize-crud-auth
 ```
 
 ## Usage
@@ -34,23 +34,25 @@ yarn add express-sequelize-crud-2
 
 ```ts
 import express from 'express'
-import crud, { sequelizeCrud } from 'express-sequelize-crud'
+import crud, { sequelizeCrud } from 'express-sequelize-crud-auth'
 import { User } from './models'
 
 const app = new express()
-app.use(crud('/admin/users', sequelizeCrud(User)))
+const auth = (req, res, next) => { next() } // Define your authentification checks here
+app.use(crud('/admin/users', auth, sequelizeCrud(User)))
 ```
 
 ### Limit actions
 
 ```ts
 import express from 'express'
-import crud, { sequelizeCrud } from 'express-sequelize-crud'
+import crud, { sequelizeCrud } from 'express-sequelize-crud-auth'
 import { User } from './models'
 
 const app = new express()
+const auth = (req, res, next) => { next() } // Define your authentification checks here
 app.use(
-  crud('/admin/users', {
+  crud('/admin/users', auth, {
     ...sequelizeCrud(User),
     destroy: null,
   })
@@ -64,12 +66,13 @@ Custom filters such as case insensitive filter can be perform like this:
 ```ts
 import express from 'express'
 import { Op } from 'sequelize'
-import crud, { sequelizeCrud } from 'express-sequelize-crud'
+import crud, { sequelizeCrud } from 'express-sequelize-crud-auth'
 import { User } from './models'
 
 const app = new express()
+const auth = (req, res, next) => { next() } // Define your authentification checks here
 app.use(
-  crud('/admin/users', sequelizeCrud(User), {
+  crud('/admin/users', auth, sequelizeCrud(User), {
     filters: {
       email: value => ({
         [Op.iLike]: value,
@@ -83,18 +86,19 @@ app.use(
 
 ```ts
 import express from 'express'
-import crud from 'express-sequelize-crud'
+import crud from 'express-sequelize-crud-auth'
 import { User } from './models'
 
 const app = new express()
+const auth = (req, res, next) => { next() } // Define your authentification checks here
 app.use(
-  crud('/admin/users', {
-    getList: ({ filter, limit, offset, order }) =>
+  crud('/admin/users', auth, {
+    getList: (req, { filter, limit, offset, order }) =>
       User.findAndCountAll({ limit, offset, order, where: filter }),
-    getOne: id => User.findByPk(id),
-    create: body => User.create(body),
-    update: (id, body) => User.update(body, { where: { id } }),
-    destroy: id => User.destroy({ where: { id } }),
+    getOne: (req, id) => User.findByPk(id),
+    create: (req, body) => User.create(body),
+    update: (req, id, body) => User.update(body, { where: { id } }),
+    destroy: (req, id) => User.destroy({ where: { id } }),
   })
 )
 ```
@@ -108,14 +112,14 @@ When using react-admin autocomplete reference field, a request is done to the AP
 ```ts
 app.use(
   crud('/admin/users', {
-    search: async (q, limit) => {
+    search: async (req, conf: { q, filter, limit, offset, order }) => {
       const { rows, count } = await User.findAndCountAll({
-        limit,
+        conf.limit,
         where: {
           [Op.or]: [
-            { address: { [Op.iLike]: `${q}%` } },
-            { zipCode: { [Op.iLike]: `${q}%` } },
-            { city: { [Op.iLike]: `${q}%` } },
+            { address: { [Op.iLike]: `${conf.q}%` } },
+            { zipCode: { [Op.iLike]: `${conf.q}%` } },
+            { city: { [Op.iLike]: `${conf.q}%` } },
           ],
         },
       })

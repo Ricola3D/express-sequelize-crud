@@ -1,3 +1,4 @@
+import { Request } from 'express'
 import { uniqBy, flatten } from 'lodash'
 import { Op, FindOptions, WhereOptions } from 'sequelize'
 
@@ -10,18 +11,20 @@ export const sequelizeSearchFields = <R>(
   model: { findAll: (findOptions: FindOptions) => Promise<R[]> },
   searchableFields: string[],
   comparator: symbol = Op.iLike
-) => async (q: string, limit: number, scope: WhereOptions = {}) => {
+) => async (req: Request, conf: {q : string, filter: WhereOptions, limit: number, offset: number, order: Array<[string, string]}) => {
   const resultChunks = await Promise.all(
-    prepareQueries(searchableFields)(q, comparator).map(query =>
+    prepareQueries(searchableFields)(conf.q, comparator).map(query =>
       model.findAll({
-        limit,
-        where: { ...query, ...scope },
+        limit: conf.limit,
+        offset: conf.offset,
+        order: conf.order,
+        where: { ...query, ...conf.filter},
         raw: true,
       })
     )
   )
 
-  const rows = uniqBy(flatten(resultChunks).slice(0, limit), 'id')
+  const rows = uniqBy(flatten(resultChunks).slice(0, conf.limit), 'id')
 
   return { rows, count: rows.length }
 }
