@@ -1,8 +1,7 @@
 {
-  "name": "express-sequelize-crud-2",
-  "version": "1.0.3",
+  "name": "express-sequelize-crud-v2",
+  "version": "1.0.0",
   "description": "React Admin backend with Express and Sequelize. 1 line per resource!",
-  "type": "module",
   "main": "./lib/index.js",
   "types": "./lib/src/index.d.ts",
   "repository": {
