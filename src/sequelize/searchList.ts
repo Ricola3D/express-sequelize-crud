@@ -11,7 +11,7 @@ export const sequelizeSearchFields = <R>(
   model: { findAll: (findOptions: FindOptions) => Promise<R[]> },
   searchableFields: string[],
   comparator: symbol = Op.iLike
-) => async (req: Request, conf: {q : string, filter: WhereOptions, limit: number, offset: number, order: Array<[string, string]}) => {
+) => async (req: Request, conf: {q : string, filter: WhereOptions, limit: number, offset: number, order: Array<[string, string]>}) => {
   const resultChunks = await Promise.all(
     prepareQueries(searchableFields)(conf.q, comparator).map(query =>
       model.findAll({

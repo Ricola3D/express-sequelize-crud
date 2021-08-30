@@ -1,9 +1,9 @@
-import { RequestHandler, Request } from 'express'
+import { RequestHandler, Request, Response } from 'express'
 import mapValues from 'lodash/mapValues'
 
 import { setGetListHeaders } from './headers'
 
-export type GetList<R> = (req: Request, conf: {
+export type GetList<R> = (req: Request, res: Response, conf: {
   filter: Record<string, any>
   limit: number
   offset: number
@@ -12,10 +12,13 @@ export type GetList<R> = (req: Request, conf: {
 
 export type Search<R> = (
   req: Request,
+  res: Response,
   conf: {
     q: string,
-    limit: number,
     filter: Record<string, any>
+    limit: number,
+    offset: number,
+    order: Array<[string, string]>
   }
 ) => Promise<{ rows: R[]; count: number }>
 
@@ -31,7 +34,7 @@ export const getMany = <R>(
     )
 
     if (!q) {
-      const { rows, count } = await doGetFilteredList(req, {
+      const { rows, count } = await doGetFilteredList(req, res, {
         filter,
         limit,
         offset,
@@ -45,7 +48,13 @@ export const getMany = <R>(
           error: 'Search has not been implemented yet for this resource',
         })
       }
-      const { rows, count } = await doGetSearchList(req, {q, limit, filter})
+      const { rows, count } = await doGetSearchList(req, res, {
+        q,
+        filter,
+        limit,
+        offset,
+        order,
+      })
       setGetListHeaders(res, offset, count, rows.length)
       res.json(rows)
     }

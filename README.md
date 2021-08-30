@@ -1,5 +1,7 @@
-# Changes from lalalilo/express-sequelize-crud 
+# Changes from lalalilo/express-sequelize-crud
+
 This repository is a fork of lalalilo/express-sequelize-crud. It only adds a few changes:
+
 - Add of an `auth` method for the crud routers with signature `(req, res, next) => void`
 - Add of the parameter `req` in the actions parameters, to allow management specific permissions thanks to a token for exemple.
 - Standalone build (out of CircleCI)
@@ -18,7 +20,7 @@ Expose resource CRUD (Create Read Update Delete) routes for Express & Sequelize 
 
 For `getList` methods, the response includes the total number of items in the collection in `X-Total-Count` header. You should use this response header for pagination and avoid using `Content-Range` header if your request does not include a `Range` header. Checkout [this](https://stackoverflow.com/questions/53259737/content-range-working-in-safari-but-not-in-chrome) stackoverflow thread for more info.
 
- If you are using `ra-data-simple-rest`, please refer to the [documentation](https://github.com/Serind/ra-data-simple-rest#note-about-content-range) to use `X-Total-Count` for pagination.
+If you are using `ra-data-simple-rest`, please refer to the [documentation](https://github.com/Serind/ra-data-simple-rest#note-about-content-range) to use `X-Total-Count` for pagination.
 
 [![codecov](https://codecov.io/gh/lalalilo/express-sequelize-crud/branch/master/graph/badge.svg)](https://codecov.io/gh/lalalilo/express-sequelize-crud) [![CircleCI](https://circleci.com/gh/lalalilo/express-sequelize-crud.svg?style=svg)](https://circleci.com/gh/lalalilo/express-sequelize-crud)
 
@@ -38,7 +40,9 @@ import crud, { sequelizeCrud } from 'express-sequelize-crud-auth'
 import { User } from './models'
 
 const app = new express()
-const auth = (req, res, next) => { next() } // Define your authentification checks here
+const auth = (req, res, next) => {
+  next()
+} // Define your authentification checks here
 app.use(crud('/admin/users', auth, sequelizeCrud(User)))
 ```
 
@@ -50,7 +54,9 @@ import crud, { sequelizeCrud } from 'express-sequelize-crud-auth'
 import { User } from './models'
 
 const app = new express()
-const auth = (req, res, next) => { next() } // Define your authentification checks here
+const auth = (req, res, next) => {
+  next()
+} // Define your authentification checks here
 app.use(
   crud('/admin/users', auth, {
     ...sequelizeCrud(User),
@@ -70,7 +76,9 @@ import crud, { sequelizeCrud } from 'express-sequelize-crud-auth'
 import { User } from './models'
 
 const app = new express()
-const auth = (req, res, next) => { next() } // Define your authentification checks here
+const auth = (req, res, next) => {
+  next()
+} // Define your authentification checks here
 app.use(
   crud('/admin/users', auth, sequelizeCrud(User), {
     filters: {
@@ -90,15 +98,17 @@ import crud from 'express-sequelize-crud-auth'
 import { User } from './models'
 
 const app = new express()
-const auth = (req, res, next) => { next() } // Define your authentification checks here
+const auth = (req, res, next) => {
+  next()
+} // Define your authentification checks here
 app.use(
   crud('/admin/users', auth, {
-    getList: (req, { filter, limit, offset, order }) =>
+    getList: (req, res, { filter, limit, offset, order }) =>
       User.findAndCountAll({ limit, offset, order, where: filter }),
-    getOne: (req, id) => User.findByPk(id),
-    create: (req, body) => User.create(body),
-    update: (req, id, body) => User.update(body, { where: { id } }),
-    destroy: (req, id) => User.destroy({ where: { id } }),
+    getOne: (req, res, id) => User.findByPk(id),
+    create: (req, res, body) => User.create(body),
+    update: (req, res, id, body) => User.update(body, { where: { id } }),
+    destroy: (req, res, id) => User.destroy({ where: { id } }),
   })
 )
 ```
